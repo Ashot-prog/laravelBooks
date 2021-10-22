@@ -11,12 +11,12 @@ class Author extends Model
 {
     use HasFactory;
 
-    protected $fillable=[
+    protected $fillable = [
         'name'
     ];
 
     public function books()
     {
-        return $this->belongsToMany(\App\Models\Book::class, \App\Models\Home::class, 'author_id', 'book_id');
+        return $this->belongsToMany(\App\Models\Book::class, BookAuthor::class, 'author_id', 'book_id');
     }
 }

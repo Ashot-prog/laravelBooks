@@ -8,22 +8,18 @@ use Illuminate\Http\Request;
 
 class BookController extends Controller
 {
-    public function index(Request $request)
+    public function index(Request $request, $order_by = 'id')
     {
-        $sorts = ['id'=>'id','title'=>'title'];
-        $order_by = 'id';
+        $sorts = ['id' => 'id', 'title' => 'title'];
         $how = 'asc';
-        if ($request->input("order_by")) {
-            $order_by = $request->input('order_by');
-        }
 
         if ($request->input('how')) {
             $how = $request->input('how');
         }
 
         $book = Book::orderBy($order_by, $how)->paginate(3);
-        $book->withPath("book?order_by={$order_by}&&how={$how}");
-        return view('book.index', ['books' => $book,'sorts'=>$sorts]);
+        $book->withPath("book?order_by={$order_by}&how={$how}");
+        return view('book.index', compact('book', 'sorts'));
     }
 
     /**
@@ -44,7 +40,8 @@ class BookController extends Controller
      * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request){
+    public function store(Request $request)
+    {
 
         $request->validate([
             'name' => ['required'],
@@ -98,7 +95,7 @@ class BookController extends Controller
         ]);
         $book->update(['name' => $request->input('name')]);
         $book->authors()->sync($request->input('authors'));
-        return redirect()->route('book.index',['book' => $book]);
+        return redirect()->route('book.index', ['book' => $book]);
     }
 
     /**
